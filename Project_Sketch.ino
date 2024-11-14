@@ -12,15 +12,16 @@
 #define CLOCKPIN   5    // Light Yellow Wire
 #define SOUNDDATAPIN 7  // Sound Sensor
 #define MAXBRIGHTNESS 150
-#define LEASTBRIGHTNESS 20
+#define MINBRIGHTNESS 30
 Adafruit_DotStar strip(NUMPIXELS, DATAPIN, CLOCKPIN);
 int currentState;
 int lastState = LOW;
 int ledState = LOW;
 int ledColor = 4;
 int touches = 0;
+int timeAfterHold = -1;
 int timeAfterTouch = -1;
-int lastBrightness = 10;
+int currentBrightness = 150;
 uint32_t lastColor = strip.Color(0,0,255);
 uint32_t green = strip.Color(255,0,0);
 uint32_t red = strip.Color(0,255,0);
@@ -47,73 +48,150 @@ void loop(){
         case LOW:
           touches = touches + 1;
           timeAfterTouch = 0;
+          timeAfterHold = -1;
+          break;
+        case HIGH:
+          timeAfterHold = timeAfterHold+1;
           break;
       }
-    break;
+      break;
+    case LOW:
+      switch (lastState) {
+        case HIGH:
+          timeAfterHold=-1;
+          break;
+      }
+      break;
   }
+
   if (timeAfterTouch > -1){
     timeAfterTouch = timeAfterTouch + 1;
   }
+  if (timeAfterHold > -1){
+    timeAfterHold = timeAfterHold + 1;
+  }
   if (timeAfterTouch > 1000){
     timeAfterTouch = 1000;
+  }
+  if (timeAfterHold > 700) {
+    timeAfterHold = 700;
+  }
+  switch (timeAfterHold) {
+    case 700:
+      switch (ledState) {
+        case HIGH:
+          currentBrightness=strip.getBrightness();
+          currentBrightness = currentBrightness - 30;
+          if (currentBrightness < MINBRIGHTNESS){
+            currentBrightness = MINBRIGHTNESS;
+          }
+          strip.setBrightness(currentBrightness);
+          strip.show();
+          timeAfterHold = 0;
+          timeAfterTouch = -1;
+          touches = 0;
+          break;
+      }
+    break;
   }
 
   switch (timeAfterTouch) {
     case 1000:
       switch (touches) {
-        case 3:
+        case 1:
           switch (ledState) { // Somewhat Broken
             case LOW:
               strip.fill(lastColor,0,72);
-              strip.setBrightness(lastBrightness);
+              strip.setBrightness(currentBrightness);
               strip.show();
               ledState = HIGH;
               break;
             case HIGH:
-              lastBrightness = strip.getBrightness();
               lastColor = strip.getPixelColor(1);
+              currentBrightness = 150;
               strip.clear();
               strip.show();
               ledState = LOW;
               break;
           }
+          break;
         case 2:
-          switch (ledColor) {
-            case 0:
-              ledColor = 1;
-              strip.fill(yellow,0,72);
-              break;
-            case 1:
-              ledColor = 2;
-              strip.fill(green,0,72);
-              break;
-            case 2:
-              ledColor = 3;
-              strip.fill(cyan,0,72);
-              break;
-            case 3:
-              ledColor = 4;
-              strip.fill(blue,0,72);
-              break;
-            case 4:
-              ledColor = 5;
-              strip.fill(magenta,0,72);
-              break;
-            case 5:
-              ledColor = 6;
-              strip.fill(white,0,72);
-              break;
-            case 6:
-              ledColor = 0;
-              strip.fill(red,0,72);
-              break;
+          if (ledState == HIGH){
+            switch (ledColor) {
+              case 0:
+                ledColor = 1;
+                strip.fill(yellow,0,72);
+                break;
+              case 1:
+                ledColor = 2;
+                strip.fill(green,0,72);
+                break;
+              case 2:
+                ledColor = 3;
+                strip.fill(cyan,0,72);
+                break;
+              case 3:
+                ledColor = 4;
+                strip.fill(blue,0,72);
+                break;
+              case 4:
+                ledColor = 5;
+                strip.fill(magenta,0,72);
+                break;
+              case 5:
+                ledColor = 6;
+                strip.fill(white,0,72);
+                break;
+              case 6:
+                ledColor = 0;
+                strip.fill(red,0,72);
+                break;
+            }
+          strip.setBrightness(currentBrightness);
+          strip.show();
           }
-        strip.setBrightness(lastBrightness);
-        strip.show(); 
+          break;
+        case 3:
+          if (ledState == HIGH) {
+            switch (ledColor) {
+              case 0:
+                ledColor = 6;
+                strip.fill(white,0,72);
+                break;
+              case 1:
+                ledColor = 0;
+                strip.fill(red,0,72);
+                break;
+              case 2:
+                ledColor = 1;
+                strip.fill(yellow,0,72);
+                break;
+              case 3:
+                ledColor = 2;
+                strip.fill(green,0,72);
+                break;
+              case 4:
+                ledColor = 3;
+                strip.fill(cyan,0,72);
+                break;
+              case 5:
+                ledColor = 4;
+                strip.fill(blue,0,72);
+                break;
+              case 6:
+                ledColor = 5;
+                strip.fill(magenta,0,72);
+                break;
+            }
+            strip.setBrightness(currentBrightness);
+            strip.show();
+          }
+          break;
         break;
       }
-      touches = -1;
+      touches = 0;
       timeAfterTouch = -1;
+      timeAfterHold = -1;
       break;
   }
   delay(1);
