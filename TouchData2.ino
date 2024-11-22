@@ -40,7 +40,7 @@ void loop(){
          strip.show();
          strip.setBrightness(0);
          }
-         //
+         ////
 
 
 
