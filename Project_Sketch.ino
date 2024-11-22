@@ -18,6 +18,7 @@ int currentState;
 int lastState = LOW;
 int ledState = LOW;
 int ledColor = 4;
+int BlinkingState = 0;
 int touches = 0;
 int timeAfterHold = -1;
 int timeAfterTouch = -1;
@@ -249,4 +250,15 @@ void loop(){
   //     strip.show();
   //     break;
   // }
-  // 
+  //
+
+
+
+       void blinking(){
+       int Brightness = strip.getBrightness;
+       while (BlinkingState = 1){
+       strip.setBrightness(Brightness);
+       strip.show();
+       strip.setBrightness(0);
+       }
+       }
