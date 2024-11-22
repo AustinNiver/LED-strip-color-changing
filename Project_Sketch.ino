@@ -7,10 +7,10 @@
 #define NUMPIXELS  72 // Number of LEDs in strip
 
 // Here's how to control the LEDs from any two pins:
+#define TOUCHDATAPIN2 7
 #define TOUCHDATAPIN 2  // Touch Sensor
 #define DATAPIN    4    // Light Green Wire
 #define CLOCKPIN   5    // Light Yellow Wire
-#define SOUNDDATAPIN 7  // Sound Sensor
 #define MAXBRIGHTNESS 150
 #define MINBRIGHTNESS 30
 Adafruit_DotStar strip(NUMPIXELS, DATAPIN, CLOCKPIN);
@@ -41,7 +41,7 @@ void setup() {
 }
 
 void loop(){
-  
+
   currentState = digitalRead(TOUCHDATAPIN);
   switch (currentState) {
     case HIGH:
@@ -254,11 +254,3 @@ void loop(){
 
 
 
-       void blinking(){
-       int Brightness = strip.getBrightness;
-       while (BlinkingState = 1){
-       strip.setBrightness(Brightness);
-       strip.show();
-       strip.setBrightness(0);
-       }
-       //
