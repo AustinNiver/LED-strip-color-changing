@@ -7,11 +7,11 @@
 #define NUMPIXELS  72 // Number of LEDs in strip
 
 // Here's how to control the LEDs from any two pins:
-#define TOUCHDATAPIN 2  // Touch Sensor
+#define TOUCHDATAPIN 7  // Touch Sensor
 #define DATAPIN    4    // Light Green Wire
 #define CLOCKPIN   5    // Light Yellow Wire
 #define SOUNDDATAPIN 7  // Sound Sensor
-#define MAXBRIGHTNESS 150
+#define MAXBRIGHTNESS 80
 #define MINBRIGHTNESS 30
 Adafruit_DotStar strip(NUMPIXELS, DATAPIN, CLOCKPIN);
 int currentState;
@@ -21,7 +21,7 @@ int ledColor = 4;
 int touches = 0;
 int timeAfterHold = -1;
 int timeAfterTouch = -1;
-int currentBrightness = 150;
+int currentBrightness = 50;
 uint32_t lastColor = strip.Color(0,0,255);
 uint32_t green = strip.Color(255,0,0);
 uint32_t red = strip.Color(0,255,0);
@@ -81,7 +81,7 @@ void loop(){
       switch (ledState) {
         case HIGH:
           currentBrightness=strip.getBrightness();
-          currentBrightness = currentBrightness - 30;
+          currentBrightness = currentBrightness - 15;
           if (currentBrightness < MINBRIGHTNESS){
             currentBrightness = MINBRIGHTNESS;
           }
@@ -99,7 +99,7 @@ void loop(){
     case 1000:
       switch (touches) {
         case 1:
-          switch (ledState) { // Somewhat Broken
+          switch (ledState) {
             case LOW:
               strip.fill(lastColor,0,72);
               strip.setBrightness(currentBrightness);
@@ -108,7 +108,7 @@ void loop(){
               break;
             case HIGH:
               lastColor = strip.getPixelColor(1);
-              currentBrightness = 150;
+              currentBrightness = 50;
               strip.clear();
               strip.show();
               ledState = LOW;
@@ -197,6 +197,8 @@ void loop(){
   delay(1);
   lastState = currentState;
 }
+
+
   // sensorValue = digitalRead(SOUNDDATAPIN);
   // currentState = digitalRead(TOUCHDATAPIN);
   // uint32_t magenta = strip.Color(255, 0, 255);
