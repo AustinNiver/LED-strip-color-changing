@@ -24,7 +24,8 @@ int last1 = LOW, last2 = LOW;
 int detected1 = 0, detected2 = 0;
 int timetouch1 = -1, timetouch2 = -1;
 int timehold1 = -1, timehold2 = -1;
-
+bool blinkOn = false;
+int timer = 0;
 
 // INITIALIZE A STRUCT FOR THE STRIP
 struct {
@@ -142,6 +143,20 @@ void loop() {
     } else {
       LEDOn();
     }
+  }
+
+  if (ledStrip.isBlinking == true) {
+    timer+=1;
+    if (timer == 500) {
+      Blink();
+    }
+  } else if (ledStrip.isRainbow == true) {
+    timer+=1;
+    if (timer == 500) {
+      Rainbow();
+    }
+  } else {
+    timer = 0;
   }
   last1 = touch1;
   last2 = touch2;
