@@ -10,7 +10,8 @@ uint32_t colors[7] = {strip.Color(0,0,255),strip.Color(255,0,255),strip.Color(25
 
 // defining the minimum and maximum brightness values
 #define MINBRIGHT 10
-#define MAXBRIGHT 20
+#define MAXBRIGHT 100
+int rainbowNum = 0;
 
 
 void LEDOn() {
@@ -18,12 +19,14 @@ void LEDOn() {
   strip.fill(colors[ledStrip.color],0,72);
   strip.setBrightness(ledStrip.brightness);
   strip.show();
+  Serial.println("Turn on LED");
 }
 
 void LEDOff() {
   ledStrip.isOn = false;
   strip.clear();
   strip.show();
+  Serial.println("Turn off LED");
 }
 
 void ColorForward() {
@@ -36,6 +39,7 @@ void ColorForward() {
   strip.fill(colors[ledStrip.color],0,72);
   strip.setBrightness(ledStrip.brightness);
   strip.show();
+  Serial.println("Change Color of LED Forward");
 }
 
 void ColorBackward() {
@@ -48,29 +52,35 @@ void ColorBackward() {
   strip.fill(colors[ledStrip.color],0,72);
   strip.setBrightness(ledStrip.brightness);
   strip.show();
+  Serial.println("Change Color of LED Backward");
 }
 
 void DecreaseBrightness() {
   ledStrip.brightness -= 5;
+  uint32_t currentColor = strip.getPixelColor(0);
   if (ledStrip.brightness < MINBRIGHT) {
     ledStrip.brightness = MINBRIGHT;
   }
   strip.setBrightness(ledStrip.brightness);
+  strip.fill(currentColor,0,72);
   strip.show();
+  Serial.println("Decreasing Brightness");
 }
 
 void IncreaseBrightness() {
   ledStrip.brightness += 5;
-  if (ledStrip.brightness < MAXBRIGHT) {
+  uint32_t currentColor = strip.getPixelColor(0);
+  if (ledStrip.brightness > MAXBRIGHT) {
     ledStrip.brightness = MAXBRIGHT;
   }
   strip.setBrightness(ledStrip.brightness);
+  strip.fill(currentColor,0,72);
   strip.show();
+  Serial.println("Increasing Brightness");
 }
 
 void Blink() {
-  ledStrip.isRainbow = false;
-  if (blinkOn = false) {
+  if (blinkOn == false) {
     blinkOn = true;
     strip.fill(colors[ledStrip.color],0,72);
     strip.setBrightness(ledStrip.brightness);
@@ -79,15 +89,17 @@ void Blink() {
     strip.clear();
   }
   strip.show();
+  Serial.println("Blink mode On");
 }
 
 void Rainbow() {
-  if (ledStrip.color == 5){
-    ledStrip.color = 0;
+  if (rainbowNum == 5){
+    rainbowNum = 0;
   } else {
-    ledStrip.color += 1;
+    rainbowNum += 1;
   }
-  strip.fill(colors[ledStrip.color],0,72);
+  strip.fill(colors[rainbowNum],0,72);
   strip.setBrightness(ledStrip.brightness);
   strip.show();
+  Serial.println("Rainbow mode On");
 }

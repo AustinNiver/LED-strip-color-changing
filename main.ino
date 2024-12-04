@@ -11,8 +11,6 @@
 
 // STRIP DATA
 #define NUMPIXELS 72
-#define MINBRIGHT 10
-#define MAXBRIGHT 20
 
 // INITIALIZE THE STRIP
 Adafruit_DotStar strip(NUMPIXELS, DATAPIN, CLOCKPIN);
@@ -24,6 +22,7 @@ int last1 = LOW, last2 = LOW;
 int detected1 = 0, detected2 = 0;
 int timetouch1 = -1, timetouch2 = -1;
 int timehold1 = -1, timehold2 = -1;
+bool held1 = false, held2 = false;
 bool blinkOn = false;
 int timer = 0;
 
@@ -33,7 +32,7 @@ struct {
   bool isBlinking = false;
   bool isRainbow = false;
   int color = 0;
-  int brightness = 20;
+  int brightness = 50;
 } ledStrip;
 
 
@@ -68,6 +67,10 @@ void loop() {
         switch (last1) {
           case HIGH:
             timehold1 = -1;
+            if (held1 == true) {
+              held1 = false;
+              detected1 = 0;
+            }
             break;
         }
         break;
@@ -91,6 +94,10 @@ void loop() {
         switch (last2) {
           case HIGH:
             timehold2 = -1;
+            if (held2 == true) {
+              held2 = false;
+              detected2 = 0;
+            }
             break;
         }
         break;
@@ -115,6 +122,7 @@ void loop() {
         DecreaseBrightness();
         timetouch1 = -1;
         timehold1 = 0;
+        held1 = true;
       }
     }
   }else if (detected2 > 0) {
@@ -135,25 +143,27 @@ void loop() {
         IncreaseBrightness();
         timetouch2 = -1;
         timehold2 = 0;
+        held2 = true;
       }
     }
-  } else {
-    if (ledStrip.isOn == false){
-      LEDOff();
-    } else {
-      LEDOn();
-    }
+  // } else {
+  //   if (ledStrip.isOn == false){
+  //     LEDOff();
+  //   } else {
+  //     LEDOn();
+  //   }
   }
-
   if (ledStrip.isBlinking == true) {
     timer+=1;
     if (timer == 500) {
       Blink();
+      timer = 0;
     }
   } else if (ledStrip.isRainbow == true) {
     timer+=1;
     if (timer == 500) {
       Rainbow();
+      timer = 0;
     }
   } else {
     timer = 0;
